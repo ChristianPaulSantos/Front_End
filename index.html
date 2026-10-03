@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light Ride</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#CBD5E1; --card:#DCE4EC; --panel:#F2F4F8; --white:#fff;
+  --orange:#FFA630; --teal:#4EA3AB; --navy:#2B4C7E; --green:#4CFF4C;
+  --muted:#5b7396; --shadow:0 8px 18px rgba(43,76,126,.18); --inset:inset 0 3px 8px rgba(0,0,0,.15);
+  --bar:#D9D9D9;
+}
+body.dark{
+  --bg:#1c2733; --card:#27384a; --panel:#2f4258; --white:#33485f;
+  --navy:#dbe7f7; --muted:#9db3cf; --bar:#15202b;
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--navy);transition:background .3s}
+h1,h2,h3,.f{font-family:'Chakra Petch',sans-serif;font-weight:700;letter-spacing:.02em}
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+input{font:inherit;color:inherit}
+.topbar{height:44px;background:var(--bar);display:flex;align-items:center;padding:0 20px;gap:12px;font-family:'Chakra Petch';font-weight:700;font-size:14px;color:var(--navy)}
+.topbar .sp{flex:1}
+.screen{display:none;min-height:calc(100vh - 44px)}
+.screen.on{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.center{display:grid;place-items:center;min-height:calc(100vh - 44px);padding:20px}
+
+/* buttons */
+.btn{background:var(--orange);color:var(--navy);border-radius:999px;padding:14px 26px;font-family:'Chakra Petch';font-weight:700;font-size:18px;box-shadow:var(--shadow);text-align:left;transition:transform .12s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:none}
+.btn.teal{background:var(--teal);color:#fff}
+.btn.white{background:#fff;color:var(--navy)}
+.btn.green{background:var(--green)}
+.btn.block{width:100%}
+.btn.sm{padding:9px 18px;font-size:15px}
+.link{background:none;font-family:'Chakra Petch';font-weight:700;font-size:12px;color:var(--navy);text-decoration:underline}
+
+/* splash */
+#splash{background:var(--bg)}
+.pill{display:flex;width:280px;height:40px;border-radius:999px;background:#bdbdbd;box-shadow:var(--inset);overflow:hidden;font-family:'Chakra Petch';font-weight:700;font-size:15px}
+.pill div{flex:1;display:grid;place-items:center}
+.pill .a{background:var(--orange);border-radius:999px;box-shadow:var(--shadow)}
+.pill button{flex:1;background:none;font-family:'Chakra Petch';font-weight:700}
+.pill button.act{background:var(--orange);border-radius:999px;box-shadow:var(--shadow)}
+.splash-wrap{display:grid;justify-items:center;gap:18px}
+.loader{width:160px;height:6px;background:rgba(43,76,126,.2);border-radius:9px;overflow:hidden}
+.loader i{display:block;height:100%;width:0;background:var(--orange);animation:load 2.2s forwards}
+@keyframes load{to{width:100%}}
+
+/* card */
+.cardbox{background:var(--card);border-radius:34px;padding:34px 40px;box-shadow:var(--shadow);width:min(520px,94vw);display:grid;gap:18px;justify-items:center}
+.field{width:100%;background:linear-gradient(#fff,#f6f6f6);border-radius:999px;box-shadow:var(--inset),0 0 0 2px rgba(0,0,0,.05);padding:0 24px;height:60px;display:flex;align-items:center;gap:8px}
+.field input{border:0;outline:0;background:none;flex:1;font-family:'Chakra Petch';font-weight:700;font-size:20px;color:var(--navy)}
+.field input::placeholder{color:var(--navy);opacity:.9}
+.field button{background:none;font-size:18px}
+.or{font-size:13px;color:var(--muted)}
+.err{color:#c0392b;font-size:13px;min-height:16px;font-weight:600;text-align:center}
+.hint{font-size:12px;color:var(--muted);text-align:center}
+.row{display:flex;gap:10px;align-items:center;width:100%}
+.sp{flex:1}
+
+/* auth */
+.otp{display:flex;gap:12px}
+.otp input{width:56px;height:56px;border-radius:8px;border:0;text-align:center;font-family:'Chakra Petch';font-size:26px;font-weight:700;background:linear-gradient(#fff,#f1f1f1);box-shadow:var(--inset);outline:0;color:#2B4C7E}
+.otp input:focus{box-shadow:var(--inset),0 0 0 3px var(--orange)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* app shell */
+.shell{display:grid;grid-template-columns:260px 1fr;grid-template-rows:96px 1fr;min-height:calc(100vh - 44px)}
+.side{grid-row:1/3;padding:14px;display:flex;flex-direction:column;gap:12px;border-right:3px solid #fff}
+.logo{width:96px;height:96px;border-radius:24px;background:#212121;display:grid;place-items:center;margin-bottom:6px}
+.nav{background:var(--card);border-radius:18px;padding:22px 18px;font-family:'Chakra Petch';font-weight:700;font-size:19px;text-align:left;box-shadow:var(--shadow);width:100%;text-transform:uppercase;color:var(--muted)}
+.nav.on{background:#fff;color:var(--navy)}
+.nav.teal{background:var(--teal);color:var(--navy);text-transform:none}
+.nav.orange{background:var(--orange);color:var(--navy);text-transform:none}
+.nav:hover{filter:brightness(1.04)}
+.head{background:#fff;display:flex;align-items:center;gap:20px;padding:0 22px;border-bottom-left-radius:18px}
+body.dark .head{background:var(--card)}
+.sq{width:64px;height:64px;border-radius:12px;background:var(--orange);display:grid;place-items:center;box-shadow:var(--shadow);position:relative}
+.sq svg{width:36px;height:36px}
+.badge{position:absolute;top:-6px;right:-6px;background:#d22;color:#fff;border-radius:99px;font-size:11px;padding:2px 6px;font-family:Inter;font-weight:700}
+.search{flex:1;max-width:520px;margin-left:auto;display:flex;border-radius:12px;overflow:hidden;box-shadow:var(--inset);background:#d9d9d9}
+.search input{flex:1;border:0;background:none;outline:0;padding:0 16px;height:64px;font-size:16px;color:#222}
+.search button{width:96px;background:var(--orange)}
+.main{padding:22px;overflow:auto}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:22px}
+.tile{background:var(--panel);border-radius:30px;padding:26px;min-height:220px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;gap:10px;transition:transform .15s}
+.tile:hover{transform:translateY(-3px)}
+.tile h3{font-size:16px}
+.big{font-family:'Chakra Petch';font-size:38px;font-weight:700}
+.panel{background:var(--panel);border-radius:30px;padding:28px;box-shadow:var(--shadow)}
+.panel h2{margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font-family:'Chakra Petch';text-align:left;padding:10px;border-bottom:2px solid var(--bg)}
+td{padding:10px;border-bottom:1px solid var(--bg)}
+.chip{display:inline-block;padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;background:var(--orange);color:#2B4C7E}
+.chip.g{background:#9be89b}.chip.r{background:#f4a6a0}
+.bars{display:flex;align-items:flex-end;gap:16px;height:200px;padding:10px 0;border-bottom:3px solid var(--bg)}
+.bars div{flex:1;background:var(--orange);border-radius:10px 10px 0 0;position:relative;transition:height .6s}
+.bars span{position:absolute;bottom:-26px;left:0;right:0;text-align:center;font-size:12px;font-family:'Chakra Petch';font-weight:700}
+.bars b{position:absolute;top:-22px;left:0;right:0;text-align:center;font-size:12px}
+.toggle{width:58px;height:32px;border-radius:99px;background:#aaa;position:relative;transition:.2s;box-shadow:var(--inset);flex:none}
+.toggle::after{content:'';position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on{background:var(--teal)}.toggle.on::after{left:30px}
+.setrow{display:flex;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--bg)}
+.setrow .t{flex:1}.setrow .t small{display:block;color:var(--muted);font-weight:400;margin-top:2px}
+.profile{display:flex;gap:24px;align-items:center;background:var(--card);border-radius:24px;padding:24px;margin-bottom:20px}
+.avatar{width:140px;height:140px;border-radius:24px;background:var(--orange);display:grid;place-items:center;font-family:'Chakra Petch';font-size:56px;font-weight:700;flex:none}
+.form2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lbl{font-family:'Chakra Petch';font-weight:700;font-size:13px;margin-bottom:6px;color:var(--muted);text-transform:uppercase}
+.inp{width:100%;height:52px;border-radius:14px;border:0;background:#fff;box-shadow:var(--inset);padding:0 16px;outline:0;color:#2B4C7E;font-weight:600}
+.inp:focus{box-shadow:var(--inset),0 0 0 3px var(--orange)}
+.terms{max-height:60vh;overflow:auto;background:var(--panel);border-radius:24px;padding:28px;line-height:1.65;box-shadow:var(--inset)}
+.terms h3{margin:16px 0 6px}
+
+/* map + rides */
+.mapwrap{display:grid;grid-template-columns:340px 1fr;gap:20px;padding:20px;min-height:calc(100vh - 44px - 96px)}
+.mapside{display:flex;flex-direction:column;gap:14px}
+.place{background:var(--panel);border-radius:18px;padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;box-shadow:var(--shadow);border:3px solid transparent;transition:.15s}
+.place:hover,.place.sel{border-color:var(--orange)}
+.place .ic{width:54px;height:54px;border-radius:12px;background:var(--orange);display:grid;place-items:center;font-size:24px;flex:none}
+.map{position:relative;border-radius:30px;overflow:hidden;background:#dfe9d8;min-height:520px;box-shadow:var(--shadow);background-image:
+ linear-gradient(90deg,transparent 48%,#fff 48%,#fff 52%,transparent 52%),
+ linear-gradient(0deg,transparent 30%,#fff 30%,#fff 33%,transparent 33%),
+ linear-gradient(0deg,transparent 68%,#fff 68%,#fff 71%,transparent 71%),
+ linear-gradient(90deg,transparent 20%,#f4e9c8 20%,#f4e9c8 22%,transparent 22%),
+ linear-gradient(90deg,transparent 76%,#f4e9c8 76%,#f4e9c8 78%,transparent 78%)}
+.map .river{position:absolute;left:-10%;top:48%;width:130%;height:46px;background:#a9d3ee;transform:rotate(-8deg)}
+.pin{position:absolute;transform:translate(-50%,-100%);background:var(--orange);color:#2B4C7E;border-radius:50% 50% 50% 0;rotate:-45deg;width:38px;height:38px;border:3px solid #fff;box-shadow:var(--shadow);cursor:pointer;transition:.15s}
+.pin i{rotate:45deg;display:grid;place-items:center;width:100%;height:100%;font-style:normal;font-size:16px}
+.pin:hover,.pin.sel{background:var(--teal);scale:1.2}
+.me{position:absolute;width:20px;height:20px;border-radius:50%;background:#2b7fff;border:4px solid #fff;box-shadow:0 0 0 8px rgba(43,127,255,.25);left:30%;top:78%}
+.modal{position:fixed;inset:0;background:rgba(20,30,45,.45);display:none;place-items:center;z-index:50}
+.modal.on{display:grid}
+.modal .box{background:#fff;color:#2B4C7E;border-radius:26px;padding:30px;width:min(360px,92vw);display:grid;gap:16px;box-shadow:0 20px 50px rgba(0,0,0,.3);animation:fade .2s}
+body.dark .modal .box{background:#33485f;color:#dbe7f7}
+.drivers{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px;padding:20px}
+.drv{background:var(--panel);border-radius:26px;padding:22px;display:grid;gap:12px;box-shadow:var(--shadow);border:3px solid transparent;cursor:pointer;transition:.15s}
+.drv:hover{transform:translateY(-3px)}.drv.sel{border-color:var(--orange)}
+.drv .ph{height:130px;border-radius:16px;background:linear-gradient(135deg,#bcc9d9,#94a8c0);display:grid;place-items:center;font-family:'Chakra Petch';font-size:48px;color:#fff}
+.stars{color:var(--orange);letter-spacing:2px}
+.wait{max-width:760px;margin:30px auto;padding:20px}
+.ring{width:200px;height:200px;border-radius:50%;margin:10px auto;display:grid;place-items:center;background:conic-gradient(var(--orange) var(--p,0%),#ffffff55 0)}
+.ring div{width:164px;height:164px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center}
+.pad{padding:22px}
+.summ{display:grid;grid-template-columns:1.2fr 1fr;gap:22px}
+.kv{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bg)}
+.rate button{background:none;font-size:34px;color:#b8c3d2;transition:.12s}.rate button.on{color:var(--orange)}
+.notif{position:fixed;top:44px;right:0;width:min(400px,100vw);height:calc(100vh - 44px);background:var(--panel);box-shadow:-10px 0 30px rgba(0,0,0,.25);transform:translateX(105%);transition:.3s;z-index:40;padding:22px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.notif.on{transform:none}
+.n{background:#fff;color:#2B4C7E;border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+body.dark .n{background:var(--card);color:#dbe7f7}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,120px);background:#2B4C7E;color:#fff;border-radius:99px;padding:12px 24px;font-family:'Chakra Petch';font-weight:700;transition:.3s;z-index:99}
+.toast.on{transform:translate(-50%,0)}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;grid-template-rows:auto auto 1fr}
+  .side{grid-row:auto;flex-direction:row;flex-wrap:wrap;border:0}
+  .logo{display:none}.nav{width:auto;padding:12px 14px;font-size:14px;flex:1 1 40%}
+  .head{border-radius:0;flex-wrap:wrap;padding:12px;gap:10px}.search{max-width:none;min-width:100%}
+  .grid3,.mapwrap,.summ,.form2{grid-template-columns:1fr}
+  .profile{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><span>LIGHT RIDE</span><span class="sp"></span><span id="topUser"></span></div>
+
+<!-- SPLASH -->
+<section class="screen" id="splash"><div class="center"><div class="splash-wrap">
+  <div class="pill"><div class="a">LIGHT</div><div>RIDE</div></div>
+  <div class="logoSvg"></div>
+  <div class="loader"><i></i></div>
+</div></div></section>
+
+<!-- LOGIN -->
+<section class="screen" id="login"><div class="center">
+ <form class="cardbox" id="loginForm" autocomplete="on">
+  <div class="pill" id="modePill"><button type="button" class="act" data-mode="LIGHT">LIGHT</button><button type="button" data-mode="RIDE">RIDE</button></div>
+  <label class="field"><input id="email" type="email" placeholder="EMAIL" autocomplete="email"></label>
+  <div style="width:100%">
+    <label class="field"><input id="pass" type="password" placeholder="PASSWORD" autocomplete="current-password"><button type="button" id="eye" title="Show / hide password">👁</button></label>
+    <div class="row" style="justify-content:space-between;margin-top:8px;padding:0 8px"><button type="button" class="link" onclick="nav('terms')">Terms &amp; Conditions</button><button type="button" class="link" id="forgot">FORGOT PASSWORD</button></div>
+  </div>
+  <div class="err" id="loginErr"></div>
+  <button class="btn block" type="submit">SIGN IN</button>
+  <div class="or">OR</div>
+  <button class="btn teal block" type="button" id="outlook" style="text-align:center">📧 OUTLOOK</button>
+  <div class="hint">Demo: any valid email + password of 6+ characters.</div>
+ </form>
+</div></section>
+
+<!-- AUTH -->
+<section class="screen" id="auth"><div class="center">
+ <div class="cardbox" style="border-radius:16px">
+  <svg viewBox="0 0 24 24" width="170" height="170" fill="#FFA630"><path d="M12 1 3 4v7c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V4l-9-3zm0 7a2 2 0 0 1 1 3.7V15a1 1 0 0 1-2 0v-3.3A2 2 0 0 1 12 8z"/></svg>
+  <div class="hint" id="authHint">Enter the 5-digit verification code. Demo code: <b>12345</b></div>
+  <div class="otp" id="otp"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"></div>
+  <div class="err" id="authErr"></div>
+  <div class="row"><button class="btn white sm" id="authCancel">CANCEL</button><span class="sp"></span><button class="btn green sm" id="authOk">SIGN IN</button></div>
+ </div>
+</div></section>
+
+<!-- TERMS -->
+<section class="screen" id="terms">
+ <div class="pad" style="max-width:980px;margin:0 auto">
+  <div class="row" style="margin-bottom:14px"><h1>Terms &amp; Conditions</h1><span class="sp"></span><button class="btn sm" id="termsBack">BACK</button></div>
+  <div class="terms">
+   <h3>1. Acceptance</h3><p>By using Light Ride you agree to these terms. If you do not agree, please do not use the service.</p>
+   <h3>2. Accounts</h3><p>You are responsible for keeping your login details and verification codes private and for all activity on your account.</p>
+   <h3>3. Rides &amp; payments</h3><p>Fares are shown before you confirm a ride. A driver may cancel; you may cancel before pickup without charge.</p>
+   <h3>4. Conduct</h3><p>Treat drivers and riders with respect. Harassment, unsafe behaviour or misuse of the app may lead to suspension.</p>
+   <h3>5. Privacy</h3><p>Your location is only used to match you with nearby drivers and show trip history. This prototype stores data only in your own browser.</p>
+   <h3>6. Changes</h3><p>We may update these terms from time to time. Continued use means you accept the updated terms.</p>
+  </div>
+ </div>
+</section>
+
+<!-- APP SHELL pages are generated by JS -->
+<div id="appPages"></div>
+
+<!-- MODALS -->
+<div class="modal" id="confirmModal"><div class="box">
+  <h3>Confirm destination</h3><div id="confirmText"></div>
+  <div class="row"><button class="btn white sm" onclick="closeModal('confirmModal')">CANCEL</button><span class="sp"></span><button class="btn sm" id="confirmGo">CONFIRM</button></div>
+</div></div>
+<div class="modal" id="profModal"><div class="box">
+  <h3>Profile settings</h3>
+  <button class="btn white block" onclick="closeModal('profModal');nav('profile')">✏️ Edit profile</button>
+  <button class="btn white block" onclick="closeModal('profModal');nav('settings')">⚙️ Settings</button>
+  <button class="btn teal block" id="logoutBtn">⏻ Log out</button>
+</div></div>
+<aside class="notif" id="notif"><div class="row"><h2>Notifications</h2><span class="sp"></span><button class="btn sm white" onclick="toggleNotif()">CLOSE</button></div><div id="notifList"></div><button class="link" onclick="clearNotifs()" style="align-self:flex-start">Clear all</button></aside>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const store={get(k,d){try{return JSON.parse(localStorage.getItem('lr_'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('lr_'+k,JSON.stringify(v))}catch(e){}}};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2200)}
+function closeModal(id){$('#'+id).classList.remove('on')}
+function openModal(id){$('#'+id).classList.add('on')}
+const money=n=>'₱'+n.toFixed(0);
+
+const LOGO=`<svg viewBox="0 0 200 200" width="190" height="190" aria-label="Light Ride logo">
+<defs><clipPath id="c"><circle cx="100" cy="100" r="90"/></clipPath></defs>
+<g clip-path="url(#c)"><rect width="200" height="200" fill="#FFE58A"/>
+<circle cx="150" cy="105" r="12" fill="#FFC93C"/>
+<g fill="#8FA66F"><rect x="20" y="85" width="14" height="70"/><rect x="38" y="70" width="12" height="85"/><rect x="54" y="95" width="16" height="60"/><rect x="72" y="80" width="10" height="75"/></g>
+<ellipse cx="55" cy="170" rx="70" ry="35" fill="#5D7447"/><ellipse cx="160" cy="170" rx="70" ry="35" fill="#5D7447"/>
+<path d="M100 90 C 90 105 115 115 100 130 L 70 200 L 130 200 L 100 130" fill="#4a4f52"/></g>
+<path d="M100 12c-14 0-24 10-24 23 0 17 24 38 24 38s24-21 24-38c0-13-10-23-24-23z" fill="#F2B233"/><circle cx="100" cy="35" r="9" fill="#CBD5E1"/>
+<g><rect x="62" y="126" width="76" height="34" rx="14" fill="#F5B82E"/><rect x="72" y="118" width="56" height="20" rx="8" fill="#374046"/><circle cx="74" cy="148" r="5" fill="#fff"/><circle cx="126" cy="148" r="5" fill="#fff"/><rect x="66" y="158" width="14" height="8" rx="3" fill="#2d3438"/><rect x="120" y="158" width="14" height="8" rx="3" fill="#2d3438"/></g></svg>`;
+const MASCOT=`<svg viewBox="0 0 100 100" width="70" height="70"><path d="M50 12c-18 0-28 12-28 28 0 8 3 14 6 20-3 6-3 14 4 20h36c-6-8-6-14-2-18 4-6 6-12 6-22 0-16-10-28-22-28z" fill="#fff"/><circle cx="58" cy="38" r="3" fill="#212121"/><path d="M35 62q15 18 36 0M40 70q12 12 28 0" fill="none" stroke="#212121" stroke-width="3"/></svg>`;
+$$('.logoSvg').forEach(e=>e.innerHTML=LOGO);
+
+/* ---------- data / state ---------- */
+const PLACES=[
+ {id:'mall',name:'City Mall',icon:'🛍️',x:30,y:25,km:3.2},
+ {id:'uni',name:'University Campus',icon:'🎓',x:68,y:20,km:5.1},
+ {id:'air',name:'Airport Terminal',icon:'✈️',x:85,y:62,km:12.4},
+ {id:'park',name:'Central Park',icon:'🌳',x:18,y:55,km:2.1},
+ {id:'hosp',name:'General Hospital',icon:'🏥',x:55,y:48,km:4.0},
+ {id:'stn',name:'Train Station',icon:'🚆',x:48,y:84,km:6.3},
+];
+const DRIVERS=[
+ {id:1,name:'Marco Reyes',car:'Toyota Vios · ABC 123',rating:4.9,eta:3,mult:1},
+ {id:2,name:'Liza Santos',car:'Honda City · XYZ 482',rating:4.8,eta:5,mult:1.05},
+ {id:3,name:'Ben Cruz',car:'Mitsubishi Mirage · KLM 905',rating:4.6,eta:2,mult:.95},
+ {id:4,name:'Ana Dizon',car:'Suzuki Ertiga · QRS 771',rating:4.9,eta:7,mult:1.25},
+];
+let S={mode:'LIGHT',email:store.get('email',''),user:store.get('user',null),dest:null,driver:null,trip:null,
+ profile:store.get('profile',{name:'',phone:'+63 900 000 0000',city:'Imus, Cavite',address:'',plate:''}),
+ settings:store.get('settings',{dark:false,notif:true,sound:true,share:false}),
+ trips:store.get('trips',[]),notifs:store.get('notifs',[
+   {t:'Welcome to Light Ride',b:'Your account is ready. Pick a destination on the map to book your first ride.',time:'Just now'}])};
+function save(){store.set('profile',S.profile);store.set('settings',S.settings);store.set('trips',S.trips);store.set('notifs',S.notifs);store.set('user',S.user)}
+function addNotif(t,b){if(!S.settings.notif)return;S.notifs.unshift({t,b,time:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})});save();renderNotifs()}
+
+/* ---------- router ---------- */
+const PUBLIC=['splash','login','auth','terms'];
+function nav(id){location.hash='#'+id}
+function show(id){
+  $$('.screen').forEach(s=>s.classList.remove('on'));
+  const el=$('#'+id);(el||$('#login')).classList.add('on');
+  $$('.nav[data-go]').forEach(n=>n.classList.toggle('on',n.dataset.go===id));
+  $('#topUser').textContent=S.user?S.user:'';
+  window.scrollTo(0,0);
+  if(RENDER[id])RENDER[id]();
+}
+window.addEventListener('hashchange',route);
+function route(){
+  let id=location.hash.slice(1)||'splash';
+  if(!PUBLIC.includes(id)&&!S.user){id='login'}
+  if(!$('#'+id))id='dashboard';
+  show(id);
+}
+
+/* ---------- build app pages ---------- */
+const SHELL=(id,inner)=>`
+<section class="screen" id="${id}"><div class="shell">
+ <aside class="side">
+  <div class="logo">${MASCOT}</div>
+  <button class="nav" data-go="map">Map</button>
+  <button class="nav" data-go="reports">Reports and history</button>
+  <button class="nav" data-go="analytics">Analytics and reviews</button>
+  <div style="flex:1"></div>
+  <button class="nav teal" data-go="support">Support center</button>
+  <button class="nav orange" data-go="settings">Settings</button>
+ </aside>
+ <header class="head">
+  <button class="sq" title="Toggle light / dark" data-act="theme"><svg viewBox="0 0 24 24" fill="#2B4C7E"><circle cx="12" cy="12" r="4"/><g stroke="#2B4C7E" stroke-width="2" stroke-linecap="round"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></g></svg></button>
+  <button class="sq" title="Dashboard" data-go="dashboard"><svg viewBox="0 0 24 24" fill="#2B4C7E"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9h10M9 13h6M11 17h2" stroke="#FFA630" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="sq" title="Notifications" data-act="notif">🔔<span class="badge" id="badge">0</span></button>
+  <button class="sq" title="Profile" data-act="prof">👤</button>
+  <form class="search" data-act="search"><input placeholder="Search trips, places, drivers…" aria-label="Search"><button type="submit" title="Search"><svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#2B4C7E" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.3-4.3"/></svg></button></form>
+ </header>
+ <main class="main">${inner}</main>
+</div></section>`;
+
+const PAGES={
+dashboard:`
+ <div class="grid3">
+  <div class="tile" data-go="reports"><h3>Transaction history</h3><div class="big" id="dTrips">0</div><div id="dSpent" class="hint" style="text-align:left"></div></div>
+  <div class="tile" data-go="analytics"><h3>Analytics</h3><div class="big" id="dKm">0 km</div><div class="hint" style="text-align:left">Total distance travelled</div></div>
+  <div class="tile" data-go="analytics"><h3>Review and history</h3><div class="big" id="dRate">–</div><div class="hint" style="text-align:left">Average rating you gave</div></div>
+ </div>
+ <div class="panel"><h2>Profile and information</h2>
+  <div class="profile"><div class="avatar" id="dAv"></div><div style="display:grid;gap:8px"><h3 id="dName"></h3><div id="dEmail"></div><div id="dCity"></div><button class="btn sm" data-go="profile" style="width:fit-content">EDIT PROFILE</button></div></div>
+  <div class="row"><button class="btn" data-go="map">🚗 BOOK A RIDE</button><button class="btn teal" data-go="reports">VIEW HISTORY</button></div>
+ </div>`,
+map:`
+ <div class="mapwrap" style="padding:0">
+  <div class="mapside" id="placeList"></div>
+  <div class="map" id="map"><div class="river"></div><div class="me" title="You are here"></div></div>
+ </div>`,
+drivers:`<h1 style="margin-bottom:6px">Choose your driver</h1><div class="hint" style="text-align:left" id="drvSub"></div>
+ <div class="drivers" style="padding:18px 0" id="drvList"></div>
+ <div class="row"><button class="btn white" data-go="map">← BACK</button><span class="sp"></span><button class="btn" id="drvGo">REQUEST DRIVER</button></div>`,
+waiting:`<div class="wait panel" style="text-align:center">
+  <h1>Waiting for your driver</h1><div class="hint" id="waitSub"></div>
+  <div class="ring" id="ring"><div><div><div class="big" id="waitEta">3</div><div class="hint">min away</div></div></div></div>
+  <div id="waitStatus" class="f" style="margin:10px 0 22px">Driver accepted · on the way</div>
+  <div class="row" style="justify-content:center"><button class="btn white" id="waitCancel">CANCEL RIDE</button><button class="btn" id="waitSkip">⏩ SKIP TO ARRIVAL (demo)</button></div>
+ </div>`,
+summary:`<div class="summ">
+  <div class="panel"><h2>Driver summary</h2><div id="sumBox"></div></div>
+  <div class="panel"><h2>Rate your trip</h2><div class="rate" id="rate"></div>
+   <div class="lbl" style="margin-top:14px">Comments</div><input class="inp" id="sumComment" placeholder="How was your ride?">
+   <div class="row" style="margin-top:18px"><button class="btn" id="sumDone">DONE</button></div></div>
+ </div>`,
+reports:`<div class="panel"><div class="row"><h2>Reports and history</h2><span class="sp"></span><button class="btn sm white" id="exportCsv">⬇ EXPORT CSV</button><button class="btn sm teal" id="clearTrips">CLEAR</button></div><div id="repBody"></div></div>`,
+analytics:`<div class="grid3"><div class="tile" style="cursor:default"><h3>Rides</h3><div class="big" id="aRides">0</div></div><div class="tile" style="cursor:default"><h3>Total spent</h3><div class="big" id="aSpent">₱0</div></div><div class="tile" style="cursor:default"><h3>Avg rating given</h3><div class="big" id="aRate">–</div></div></div>
+ <div class="panel" style="margin-bottom:22px"><h2>Spending by day</h2><div class="bars" id="bars"></div><div style="height:30px"></div></div>
+ <div class="panel"><h2>Reviews</h2><div id="reviews"></div></div>`,
+profile:`<div class="panel"><h2>Profile and information</h2>
+  <div class="profile"><div class="avatar" id="pAv"></div><div><h3 id="pName"></h3><div id="pEmail" class="hint" style="text-align:left"></div></div></div>
+  <form id="profForm"><div class="form2">
+   <div><div class="lbl">Full name</div><input class="inp" name="name" required></div>
+   <div><div class="lbl">Phone</div><input class="inp" name="phone"></div>
+   <div><div class="lbl">City</div><input class="inp" name="city"></div>
+   <div><div class="lbl">Home address</div><input class="inp" name="address"></div>
+  </div><div class="row" style="margin-top:20px"><button class="btn" type="submit">SAVE CHANGES</button></div></form></div>`,
+settings:`<div class="panel"><h2>Settings</h2><div id="setList"></div>
+  <div class="row" style="margin-top:20px"><button class="btn sm white" onclick="nav('terms')">TERMS &amp; CONDITIONS</button><button class="btn sm teal" id="resetData">RESET ALL DATA</button></div></div>`,
+support:`<div class="panel"><h2>Support center</h2>
+  <div class="setrow"><div class="t"><b>How do I cancel a ride?</b><small>Open the waiting screen and tap Cancel ride. It is free before pickup.</small></div></div>
+  <div class="setrow"><div class="t"><b>Where is my receipt?</b><small>Reports and history → every completed trip is listed; use Export CSV.</small></div></div>
+  <div class="setrow"><div class="t"><b>I forgot my password</b><small>Use “Forgot password” on the login screen.</small></div></div>
+  <h3 style="margin:20px 0 10px">Contact us</h3>
+  <form id="supForm"><input class="inp" name="subject" placeholder="Subject" required style="margin-bottom:10px"><input class="inp" name="msg" placeholder="Describe your issue" required style="margin-bottom:14px"><button class="btn" type="submit">SEND MESSAGE</button></form></div>`
+};
+const TITLES={};
+$('#appPages').innerHTML=Object.entries(PAGES).map(([id,html])=>SHELL(id,html)).join('');
+PAGES&&0;
+
+/* ---------- splash & login ---------- */
+$('#modePill').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.mode;$$('#modePill button').forEach(x=>x.classList.toggle('act',x===b))};
+$('#eye').onclick=()=>{const p=$('#pass');p.type=p.type==='password'?'text':'password'};
+$('#forgot').onclick=()=>{const m=$('#email').value.trim();if(!/^\S+@\S+\.\S+$/.test(m)){$('#loginErr').textContent='Enter your email first, then tap Forgot password.';return}$('#loginErr').textContent='';toast('Reset link sent to '+m)};
+$('#loginForm').onsubmit=e=>{e.preventDefault();
+  const m=$('#email').value.trim(),p=$('#pass').value;
+  if(!/^\S+@\S+\.\S+$/.test(m)){$('#loginErr').textContent='Please enter a valid email address.';return}
+  if(p.length<6){$('#loginErr').textContent='Password must be at least 6 characters.';return}
+  $('#loginErr').textContent='';S.email=m;store.set('email',m);nav('auth')};
+$('#outlook').onclick=()=>{const m=$('#email').value.trim();S.email=/^\S+@\S+\.\S+$/.test(m)?m:'outlook.user@outlook.com';store.set('email',S.email);toast('Signed in with Outlook (demo)');nav('auth')};
+
+/* ---------- auth ---------- */
+const otp=$$('#otp input');
+otp.forEach((i,idx)=>{
+  i.addEventListener('input',()=>{i.value=i.value.replace(/\D/g,'');if(i.value&&otp[idx+1])otp[idx+1].focus()});
+  i.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!i.value&&otp[idx-1])otp[idx-1].focus();if(e.key==='Enter')$('#authOk').click()});
+  i.addEventListener('paste',e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,5);if(!t)return;e.preventDefault();t.split('').forEach((c,k)=>otp[k].value=c);otp[Math.min(t.length,4)].focus()});
+});
+$('#authCancel').onclick=()=>{otp.forEach(i=>i.value='');nav('login')};
+$('#authOk').onclick=()=>{
+  const code=otp.map(i=>i.value).join('');
+  if(code!=='12345'){$('#authErr').textContent=code.length<5?'Enter all 5 digits.':'Wrong code. Try 12345.';const o=$('#otp');o.classList.remove('shake');void o.offsetWidth;o.classList.add('shake');return}
+  $('#authErr').textContent='';otp.forEach(i=>i.value='');
+  S.user=S.email.split('@')[0];if(!S.profile.name)S.profile.name=S.user.replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  save();toast('Welcome, '+S.profile.name+'!');nav('dashboard')};
+$('#termsBack').onclick=()=>nav(S.user?'settings':'login');
+
+/* ---------- global delegated actions ---------- */
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){nav(g.dataset.go);return}
+  const a=e.target.closest('[data-act]');if(!a)return;
+  if(a.dataset.act==='theme'){S.settings.dark=!S.settings.dark;applyTheme();save()}
+  if(a.dataset.act==='notif')toggleNotif();
+  if(a.dataset.act==='prof')openModal('profModal');
+});
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('[data-act="search"]');if(!f)return;e.preventDefault();
+  const q=f.querySelector('input').value.trim().toLowerCase();if(!q)return;
+  const p=PLACES.find(x=>x.name.toLowerCase().includes(q));
+  if(p){S.dest=p;nav('map');setTimeout(()=>selectPlace(p.id),50);toast('Found '+p.name)}
+  else if(S.trips.some(t=>JSON.stringify(t).toLowerCase().includes(q))){nav('reports');toast('Showing trip matches')}
+  else toast('No results for “'+q+'”');
+});
+function applyTheme(){document.body.classList.toggle('dark',!!S.settings.dark)}
+$('#logoutBtn').onclick=()=>{closeModal('profModal');S.user=null;S.dest=S.driver=S.trip=null;save();toast('Logged out');nav('login')};
+
+/* ---------- notifications ---------- */
+function toggleNotif(){$('#notif').classList.toggle('on')}
+function renderNotifs(){
+  $('#notifList').innerHTML=S.notifs.length?S.notifs.map(n=>`<div class="n"><b>${n.t}</b><div style="margin:4px 0">${n.b}</div><small style="opacity:.7">${n.time}</small></div>`).join(''):'<div class="hint">No notifications</div>';
+  $$('.badge').forEach(b=>{b.textContent=S.notifs.length;b.style.display=S.notifs.length?'':'none'});
+}
+function clearNotifs(){S.notifs=[];save();renderNotifs()}
+
+/* ---------- render per screen ---------- */
+const RENDER={
+dashboard(){
+  const n=S.trips.length,sp=S.trips.reduce((a,t)=>a+t.fare,0),km=S.trips.reduce((a,t)=>a+t.km,0);
+  const r=S.trips.filter(t=>t.rating);
+  $('#dTrips').textContent=n+' trips';$('#dSpent').textContent=n?'Total spent '+money(sp):'No trips yet – book your first ride';
+  $('#dKm').textContent=km.toFixed(1)+' km';$('#dRate').textContent=r.length?(r.reduce((a,t)=>a+t.rating,0)/r.length).toFixed(1)+' ★':'–';
+  const nm=S.profile.name||'Rider';$('#dAv').textContent=nm[0].toUpperCase();$('#dName').textContent=nm+' · '+S.mode+' mode';
+  $('#dEmail').textContent=S.email;$('#dCity').textContent=S.profile.city||'';
+},
+map(){
+  $('#placeList').innerHTML=`<div class="panel" style="padding:16px"><h3>Where to?</h3><div class="hint" style="text-align:left">Tap a place or a pin on the map.</div></div>`+
+   PLACES.map(p=>`<div class="place" data-p="${p.id}"><div class="ic">${p.icon}</div><div><b class="f">${p.name}</b><div class="hint" style="text-align:left">${p.km} km · ≈ ${money(fare(p.km,1))}</div></div></div>`).join('');
+  $$('#map .pin').forEach(x=>x.remove());
+  PLACES.forEach(p=>{const d=document.createElement('div');d.className='pin';d.dataset.p=p.id;d.style.left=p.x+'%';d.style.top=p.y+'%';d.title=p.name;d.innerHTML='<i>'+p.icon+'</i>';$('#map').appendChild(d)});
+  $$('[data-p]').forEach(el=>el.onclick=()=>selectPlace(el.dataset.p,true));
+  if(S.dest)selectPlace(S.dest.id);
+},
+drivers(){
+  if(!S.dest){nav('map');return}
+  $('#drvSub').textContent='Trip to '+S.dest.name+' · '+S.dest.km+' km';
+  $('#drvList').innerHTML=DRIVERS.map(d=>`<div class="drv ${S.driver&&S.driver.id===d.id?'sel':''}" data-d="${d.id}"><div class="ph">${d.name[0]}</div><b class="f" style="font-size:18px">${d.name}</b><div>${d.car}</div><div><span class="stars">★★★★★</span> ${d.rating}</div><div class="row"><span class="chip g">${d.eta} min away</span><span class="sp"></span><b class="f">${money(fare(S.dest.km,d.mult))}</b></div></div>`).join('');
+  $$('.drv').forEach(el=>el.onclick=()=>{S.driver=DRIVERS.find(d=>d.id==el.dataset.d);RENDER.drivers()});
+},
+waiting(){
+  if(!S.dest||!S.driver){nav('map');return}
+  $('#waitSub').textContent=S.driver.name+' · '+S.driver.car+' → '+S.dest.name;
+  let eta=S.driver.eta*60,total=eta;clearInterval(RENDER.tm);
+  const tick=()=>{const m=Math.ceil(eta/60);$('#waitEta').textContent=m>0?m:'🚗';$('#ring').style.setProperty('--p',((1-eta/total)*100)+'%');
+    $('#waitStatus').textContent=eta<=0?'Your driver has arrived!':eta<30?'Driver is almost there…':'Driver accepted · on the way'}
+  tick();
+  RENDER.tm=setInterval(()=>{eta-=5;if(eta<=0){eta=0;clearInterval(RENDER.tm);tick();addNotif('Driver arrived',S.driver.name+' is waiting for you.');setTimeout(()=>{if(location.hash==='#waiting')finishTrip()},1800)}else tick()},1000);
+},
+summary(){
+  const t=S.trip;if(!t){nav('dashboard');return}
+  $('#sumBox').innerHTML=[['Driver',t.driver],['Vehicle',t.car],['Destination',t.dest],['Distance',t.km+' km'],['Date',t.date],['Fare','<b class="f" style="font-size:22px">'+money(t.fare)+'</b>']].map(([k,v])=>`<div class="kv"><span>${k}</span><span>${v}</span></div>`).join('');
+  let r=0;const box=$('#rate');
+  const draw=()=>{box.innerHTML=[1,2,3,4,5].map(i=>`<button class="${i<=r?'on':''}" data-r="${i}" aria-label="${i} stars">★</button>`).join('')};draw();
+  box.onclick=e=>{const b=e.target.closest('[data-r]');if(b){r=+b.dataset.r;draw()}};
+  $('#sumDone').onclick=()=>{t.rating=r||null;t.comment=$('#sumComment').value.trim();S.trips.unshift(t);S.trip=null;S.dest=S.driver=null;save();addNotif('Trip completed','Receipt saved to Reports and history.');toast('Trip saved');nav('reports')};
+},
+reports(){
+  const body=$('#repBody');
+  body.innerHTML=S.trips.length?`<table><thead><tr><th>Date</th><th>Destination</th><th>Driver</th><th>Km</th><th>Fare</th><th>Rating</th></tr></thead><tbody>${S.trips.map(t=>`<tr><td>${t.date}</td><td>${t.dest}</td><td>${t.driver}</td><td>${t.km}</td><td><b>${money(t.fare)}</b></td><td>${t.rating?'★'.repeat(t.rating):'<span class="chip">unrated</span>'}</td></tr>`).join('')}</tbody></table>`:`<div class="hint" style="padding:30px;text-align:center">No trips yet. <button class="link" data-go="map" style="font-size:14px">Book a ride</button></div>`;
+  $('#clearTrips').onclick=()=>{if(S.trips.length&&confirm('Clear all trip history?')){S.trips=[];save();RENDER.reports()}};
+  $('#exportCsv').onclick=()=>{if(!S.trips.length){toast('Nothing to export');return}
+    const rows=[['date','destination','driver','car','km','fare','rating','comment'],...S.trips.map(t=>[t.date,t.dest,t.driver,t.car,t.km,t.fare,t.rating||'',(t.comment||'').replace(/"/g,'""')])];
+    const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='light-ride-history.csv';a.click()};
+},
+analytics(){
+  const n=S.trips.length,sp=S.trips.reduce((a,t)=>a+t.fare,0),r=S.trips.filter(t=>t.rating);
+  $('#aRides').textContent=n;$('#aSpent').textContent=money(sp);$('#aRate').textContent=r.length?(r.reduce((a,t)=>a+t.rating,0)/r.length).toFixed(1)+' ★':'–';
+  const days={};S.trips.forEach(t=>days[t.date.split(',')[0]]=(days[t.date.split(',')[0]]||0)+t.fare);
+  const ent=Object.entries(days).slice(0,7).reverse(),max=Math.max(1,...ent.map(e=>e[1]));
+  $('#bars').innerHTML=ent.length?ent.map(([d,v])=>`<div style="height:${Math.max(8,v/max*100)}%"><b>${money(v)}</b><span>${d}</span></div>`).join(''):'<div class="hint" style="align-self:center;text-align:center;background:none">No data yet</div>';
+  $('#reviews').innerHTML=r.length?r.map(t=>`<div class="setrow"><div class="t"><b>${t.driver}</b> <span class="stars">${'★'.repeat(t.rating)}</span><small>${t.comment||'No comment'} · ${t.date}</small></div></div>`).join(''):'<div class="hint">Rate a completed trip to see reviews here.</div>';
+},
+profile(){
+  const f=$('#profForm'),p=S.profile,nm=p.name||'Rider';
+  $('#pAv').textContent=nm[0].toUpperCase();$('#pName').textContent=nm;$('#pEmail').textContent=S.email;
+  ['name','phone','city','address'].forEach(k=>f.elements[k].value=p[k]||'');
+  f.onsubmit=e=>{e.preventDefault();['name','phone','city','address'].forEach(k=>p[k]=f.elements[k].value.trim());save();toast('Profile saved');RENDER.profile()};
+},
+settings(){
+  const items=[['dark','Dark mode','Switch the interface to a darker theme'],['notif','Notifications','Get ride and account updates'],['sound','Sound effects','Play sounds on ride events'],['share','Share live location','Let friends follow your trip']];
+  $('#setList').innerHTML=items.map(([k,t,s])=>`<div class="setrow"><div class="t"><b class="f">${t}</b><small>${s}</small></div><div class="toggle ${S.settings[k]?'on':''}" data-k="${k}" role="switch" aria-checked="${!!S.settings[k]}" tabindex="0"></div></div>`).join('');
+  $$('#setList .toggle').forEach(el=>{const flip=()=>{S.settings[el.dataset.k]=!S.settings[el.dataset.k];applyTheme();save();RENDER.settings()};el.onclick=flip;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();flip()}}});
+  $('#resetData').onclick=()=>{if(confirm('Delete all local data and log out?')){Object.keys(localStorage).filter(k=>k.startsWith('lr_')).forEach(k=>localStorage.removeItem(k));location.hash='';location.reload()}};
+},
+support(){
+  $('#supForm').onsubmit=e=>{e.preventDefault();e.target.reset();toast('Message sent – we’ll reply by email');addNotif('Support request received','We’ll get back to you at '+S.email+'.')};
+}
+};
+
+/* ---------- ride flow ---------- */
+function fare(km,m){return Math.round((50+km*14)*m)}
+function selectPlace(id,open){
+  const p=PLACES.find(x=>x.id===id);if(!p)return;S.dest=p;
+  $$('[data-p]').forEach(el=>el.classList.toggle('sel',el.dataset.p===id));
+  if(open){$('#confirmText').innerHTML=`<b class="f" style="font-size:20px">${p.icon} ${p.name}</b><div>${p.km} km · estimated fare from <b>${money(fare(p.km,.95))}</b></div>`;openModal('confirmModal')}
+}
+$('#confirmGo').onclick=()=>{closeModal('confirmModal');S.driver=null;nav('drivers')};
+$('#drvGo').onclick=()=>{if(!S.driver){toast('Please select a driver first');return}addNotif('Driver requested',S.driver.name+' is heading to you.');nav('waiting')};
+$('#waitCancel').onclick=()=>{clearInterval(RENDER.tm);S.driver=null;addNotif('Ride cancelled','You cancelled your ride. No charge.');toast('Ride cancelled');nav('dashboard')};
+$('#waitSkip').onclick=()=>{clearInterval(RENDER.tm);finishTrip()};
+function finishTrip(){
+  clearInterval(RENDER.tm);if(!S.dest||!S.driver){nav('dashboard');return}
+  S.trip={date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})+', '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    dest:S.dest.name,km:S.dest.km,driver:S.driver.name,car:S.driver.car,fare:fare(S.dest.km,S.driver.mult),rating:null};
+  nav('summary');
+}
+/* esc closes overlays */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.modal.on').forEach(m=>m.classList.remove('on'));$('#notif').classList.remove('on')}});
+$$('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on')}));
+
+/* ---------- boot ---------- */
+applyTheme();renderNotifs();
+if(!location.hash){nav('splash');setTimeout(()=>{if(location.hash==='#splash')nav(S.user?'dashboard':'login')},2400)}else route();
+</script>
+</body>
+</html>
